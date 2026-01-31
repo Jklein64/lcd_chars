@@ -1267,6 +1267,6 @@ static constexpr std::array<Character, 96> chars = {
 inline Character Character::fromAscii(char ch) {
   assert(32 <= ch);
   int row = ch & 0b00001111;
-  int col = (ch & 0b11110000) - 0b0010;
-  return chars[row * 6 + col];
+  int col = ((ch >> 4) & 0b00001111) - 0b0010;
+  return chars[row + col * 16];
 }

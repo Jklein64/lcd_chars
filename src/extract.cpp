@@ -57,9 +57,9 @@ struct Character {
            << std::endl;
     for (int j = 0; j < 6; j++) {
       for (int i = 0; i < 16; i++) {
-        stream << '\t' << "Character{" << std::endl;
+        stream << "    " << "Character{" << std::endl;
         auto ch = img.readCharacter(i, j);
-        stream << "\t\t" << ".ascii = '";
+        stream << "        " << ".ascii = '";
         // Escape single quotes and escapes
         if (ch.ascii == '\'') {
           stream << "\\'";
@@ -69,13 +69,13 @@ struct Character {
           stream << ch.ascii;
         }
         stream << "'," << std::endl
-               << "\t\t" << ".data =" << std::endl
-               << "\t\t\t{" << std::endl;
+               << "        " << ".data =" << std::endl
+               << "            {" << std::endl;
         for (auto &row : ch.data) {
-          stream << "\t\t\t\t0b" << row << ", " << std::endl;
+          stream << "                0b" << row << "," << std::endl;
         }
-        stream << "\t\t\t}," << std::endl;
-        stream << '\t' << "}," << std::endl;
+        stream << "            }," << std::endl;
+        stream << "    " << "}," << std::endl;
       }
     }
     stream << "};" << std::endl;
@@ -84,10 +84,10 @@ struct Character {
 inline Character Character::fromAscii(char ch) {
   assert(32 <= ch);
   int row = ch & 0b00001111;
-  int col = (ch & 0b11110000) - 0b0010;
-  return chars[row * 6 + col];
+  int col = ((ch >> 4) & 0b00001111) - 0b0010;
+  return chars[row + col * 16];
 }
-    )";
+)";
     stream.close();
   } else {
     exit(1);
