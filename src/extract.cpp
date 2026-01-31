@@ -35,7 +35,7 @@ struct Image {
 int main() {
   auto img = Image();
   // Write to characters.h
-  std::ofstream stream("src/characters.h");
+  std::ofstream stream("include/characters.h");
   if (stream.is_open()) {
     stream << "#pragma once" << std::endl;
     stream << R"(
