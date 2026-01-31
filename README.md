@@ -7,7 +7,7 @@
 Include the `characters.h` file in your project, either via copy-paste, cloning this repository as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules), or adding it to a CMake project with [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) (link against target `lcd_chars`). Then convert from ASCII characters like so:
 
 ```cpp
-#include "lcd_chars/characters.h"
+#include "characters.h"
 
 // ... other code ...
 
