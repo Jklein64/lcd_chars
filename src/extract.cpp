@@ -1,17 +1,9 @@
-#include <bitset>
-
-#include "stdio.h"
+#include <fstream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-struct Character {
-  static constexpr auto CHAR_ROWS = 7;
-  static constexpr auto CHAR_COLS = 5;
-
-  char ascii = '\0';
-  std::array<std::bitset<CHAR_COLS>, CHAR_ROWS> data;
-};
+#include "characters.h"
 
 struct Image {
   int w, h, n;
@@ -30,7 +22,8 @@ struct Image {
       for (int j = 0; j < Character::CHAR_COLS; j++) {
         int pixelRow = top + 5 * i;
         int pixelCol = left + 5 * j;
-        ch.data[i][j] = data[pixelRow * w + pixelCol] > 128;
+        // Mark black pixels with 1 and empty pixels with 0
+        ch.data[i][j] = data[pixelRow * w + pixelCol] < 128;
       }
     }
     // Row and col are related to the ascii code
@@ -41,7 +34,62 @@ struct Image {
 
 int main() {
   auto img = Image();
-  printf("Image height = %d, width = %d\n", img.h, img.w);
-  auto ch = img.readCharacter(1, 1);
-  printf("ch at (0, 1) is a '%c'\n", ch.ascii);
+  // Write to characters.h
+  std::ofstream stream("src/characters.h");
+  if (stream.is_open()) {
+    stream << "#pragma once" << std::endl;
+    stream << R"(
+#include <assert.h>
+#include <bitset>
+
+struct Character {
+  static constexpr auto CHAR_ROWS = 7;
+  static constexpr auto CHAR_COLS = 5;
+
+  static Character fromAscii(char ch);
+
+  char ascii;
+  std::array<std::bitset<CHAR_COLS>, CHAR_ROWS> data;
+};
+)";
+    stream << std::endl
+           << "static constexpr std::array<Character, 96> chars = {"
+           << std::endl;
+    for (int j = 0; j < 6; j++) {
+      for (int i = 0; i < 16; i++) {
+        stream << '\t' << "Character{" << std::endl;
+        auto ch = img.readCharacter(i, j);
+        stream << "\t\t" << ".ascii = '";
+        // Escape single quotes and escapes
+        if (ch.ascii == '\'') {
+          stream << "\\'";
+        } else if (ch.ascii == '\\') {
+          stream << "\\\\";
+        } else {
+          stream << ch.ascii;
+        }
+        stream << "'," << std::endl
+               << "\t\t" << ".data =" << std::endl
+               << "\t\t\t{" << std::endl;
+        for (auto &row : ch.data) {
+          stream << "\t\t\t\t0b" << row << ", " << std::endl;
+        }
+        stream << "\t\t\t}," << std::endl;
+        stream << '\t' << "}," << std::endl;
+      }
+    }
+    stream << "};" << std::endl;
+    // Implement Character::fromAscii
+    stream << R"(
+inline Character Character::fromAscii(char ch) {
+  assert(32 <= ch);
+  int row = ch & 0b00001111;
+  int col = (ch & 0b11110000) - 0b0010;
+  return chars[row * 6 + col];
+}
+    )";
+    stream.close();
+  } else {
+    exit(1);
+  }
 }
