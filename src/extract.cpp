@@ -39,6 +39,7 @@ int main() {
   if (stream.is_open()) {
     stream << "#pragma once" << std::endl;
     stream << R"(
+#include <array>
 #include <assert.h>
 #include <bitset>
 
