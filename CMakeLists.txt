@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(lcd-type VERSION 0.0.1)
+project(lcd_chars VERSION 0.0.1)
 
 add_executable(tui src/tui.cpp)
 target_include_directories(tui PRIVATE include)
