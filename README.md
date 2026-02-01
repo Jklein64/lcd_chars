@@ -2,6 +2,8 @@
 
 7px by 5px character bitsets for digital emulation of a small two-line LCD screen. I wasn't able to find a proper font or source code for something like this, so wrote a script to extract it from [this table](https://mil.ufl.edu/4744/docs/lcdmanual/characterset.html).
 
+![Demo of terminal-based LCD ascii rendering](res/demo.png)
+
 ## Usage
 
 Include the `characters.h` file in your project, either via copy-paste, cloning this repository as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules), or adding it to a CMake project with [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) (link against target `lcd_chars`). Then convert from ASCII characters like so:
